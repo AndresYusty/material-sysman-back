@@ -18,5 +18,20 @@ public class UsuarioService {
     public Optional<Usuario> buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
+
+    // Guardar un nuevo usuario
+    public void guardarUsuario(Usuario usuario) {
+        usuarioRepository.save(usuario);
+    }
+
+    // Verificar si un usuario existe por su username
+    public boolean existePorUsername(String username) {
+        return usuarioRepository.findByUsername(username).isPresent();
+    }
+
+    // Verificar si un usuario existe por su email
+    public boolean existePorEmail(String email) {
+        return usuarioRepository.findByEmail(email).isPresent();
+    }
 }
 
