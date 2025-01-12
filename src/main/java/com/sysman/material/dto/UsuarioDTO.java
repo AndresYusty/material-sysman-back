@@ -7,13 +7,15 @@ public class UsuarioDTO {
     private String username;
     private String email;
     private RolUsuario rol;
+    private String password; // Añadir este campo
 
     public UsuarioDTO() {}
 
-    public UsuarioDTO(String username, String email, RolUsuario rol) {
+    public UsuarioDTO(String username, String email, RolUsuario rol, String password) {
         this.username = username;
         this.email = email;
         this.rol = rol;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -39,5 +41,12 @@ public class UsuarioDTO {
     public void setRol(RolUsuario rol) {
         this.rol = rol;
     }
-}
 
+    public String getPassword() { // Agregar el getter
+        return password;
+    }
+
+    public void setPassword(String password) { // Agregar el setter
+        this.password = password;
+    }
+}

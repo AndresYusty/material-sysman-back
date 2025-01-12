@@ -27,30 +27,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        try {
+            // Obtiene el token desde el encabezado Authorization
+            String token = getTokenFromRequest(request);
 
-        // Obtiene el token desde el encabezado Authorization
-        String token = getTokenFromRequest(request);
+            if (token != null && jwtTokenProvider.validarToken(token)) {
+                // Obtiene el username del token
+                String username = jwtTokenProvider.obtenerUsernameDelToken(token);
 
-        if (token != null && jwtTokenProvider.validarToken(token)) {
-            // Obtiene el username del token
-            String username = jwtTokenProvider.obtenerUsernameDelToken(token);
+                // Carga los detalles del usuario desde el UserDetailsService
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // Carga los detalles del usuario desde el UserDetailsService
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // Verifica que el contexto de seguridad no esté ya autenticado
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // Crea la autenticación basada en el token
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // Crea la autenticación basada en el token
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Establece la autenticación en el contexto de seguridad
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        } catch (Exception ex) {
+            // Maneja cualquier excepción que ocurra durante el filtro
+            logger.error("No se pudo autenticar al usuario: " + ex.getMessage());
 
-            // Establece la autenticación en el contexto de seguridad
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         // Continúa con el siguiente filtro
         chain.doFilter(request, response);
     }
 
+    /**
+     * Obtiene el token JWT desde el encabezado Authorization.
+     *
+     * @param request La solicitud HTTP.
+     * @return El token JWT si está presente y es válido; de lo contrario, null.
+     */
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

@@ -40,6 +40,9 @@ public class AuthController {
             String username = loginRequest.get("username");
             String password = loginRequest.get("password");
 
+            System.out.println("Intentando autenticar: " + username);
+            System.out.println("Contraseña ingresada: " + password);
+
             // Autenticación
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
@@ -49,15 +52,20 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtTokenProvider.generarToken(userDetails);
 
+            System.out.println("Autenticación exitosa para: " + username);
+
             // Retornar token
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            e.printStackTrace(); // Agregar para ver errores en detalle
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
     }
+
+
 
     // Endpoint para registrar un nuevo usuario
     @PostMapping("/register")
@@ -75,11 +83,13 @@ public class AuthController {
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setUsername(usuarioDTO.getUsername());
         nuevoUsuario.setEmail(usuarioDTO.getEmail());
-        nuevoUsuario.setPassword(passwordEncoder.encode("password123")); // Contraseña predeterminada
+        nuevoUsuario.setPassword(passwordEncoder.encode(usuarioDTO.getPassword())); // Usar el password del DTO
         nuevoUsuario.setRol(RolUsuario.valueOf(usuarioDTO.getRol().toString()));
 
         usuarioService.guardarUsuario(nuevoUsuario);
 
         return ResponseEntity.ok("Usuario registrado con éxito");
     }
+
+
 }
