@@ -10,6 +10,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -55,11 +61,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // Endpoints públicos
-                .anyRequest().authenticated() // Autenticación requerida para los demás endpoints
+                .cors()
                 .and()
-                .httpBasic(); // Mecanismo de autenticación (puede ser cambiado a JWT en el futuro)
+                .authorizeHttpRequests()
+                .requestMatchers("/api/auth/**").permitAll() // Endpoints públicos
+                .anyRequest().authenticated() // Protege el resto de los endpoints
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
+
+
+    /**
+     * Configuración de CORS.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200")); // Agrega la URL del frontend
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        corsConfiguration.setAllowedHeaders(List.of("*")); // Permitir todos los encabezados
+        corsConfiguration.setAllowCredentials(true); // Habilitar credenciales (cookies o autenticación)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
     }
 }
