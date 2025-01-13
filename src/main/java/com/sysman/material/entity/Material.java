@@ -36,8 +36,11 @@ public class Material {
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoMaterial estado;
 
-    @Column(name = "ciudad_codigo", nullable = false)
-    private Integer ciudadCodigo;
+    @Column(name = "nombre_ciudad", length = 100)
+    private String nombreCiudad;
+
+    @Column(name = "departamento", length = 100)
+    private String departamento;
 
     // Getters y Setters
     public Long getId() {
@@ -104,11 +107,19 @@ public class Material {
         this.estado = estado;
     }
 
-    public Integer getCiudadCodigo() {
-        return ciudadCodigo;
+    public String getNombreCiudad() {
+        return nombreCiudad;
     }
 
-    public void setCiudadCodigo(Integer ciudadCodigo) {
-        this.ciudadCodigo = ciudadCodigo;
+    public void setNombreCiudad(String nombreCiudad) {
+        this.nombreCiudad = nombreCiudad;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 }

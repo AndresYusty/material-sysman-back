@@ -13,7 +13,8 @@ public class MaterialDTO {
     private LocalDate fechaCompra;
     private LocalDate fechaVenta;
     private String estado;
-    private Integer ciudadCodigo;
+    private String nombreCiudad; // Nuevo campo para el nombre de la ciudad
+    private String departamento; // Nuevo campo para el departamento
 
     // Getters y Setters
     public Long getId() {
@@ -80,11 +81,19 @@ public class MaterialDTO {
         this.estado = estado;
     }
 
-    public Integer getCiudadCodigo() {
-        return ciudadCodigo;
+    public String getNombreCiudad() {
+        return nombreCiudad;
     }
 
-    public void setCiudadCodigo(Integer ciudadCodigo) {
-        this.ciudadCodigo = ciudadCodigo;
+    public void setNombreCiudad(String nombreCiudad) {
+        this.nombreCiudad = nombreCiudad;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 }

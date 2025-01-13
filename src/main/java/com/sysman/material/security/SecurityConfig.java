@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/auth/**").permitAll() // Endpoints públicos
                 .anyRequest().authenticated() // Protege el resto de los endpoints
                 .and()

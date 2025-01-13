@@ -3,6 +3,7 @@ package com.sysman.material.controller;
 import com.sysman.material.dto.MaterialDTO;
 import com.sysman.material.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +35,6 @@ public class MaterialController {
         return ResponseEntity.ok(materiales);
     }
 
-    // Buscar materiales por ciudad
-    @GetMapping("/ciudad/{ciudadCodigo}")
-    public ResponseEntity<List<MaterialDTO>> buscarPorCiudad(@PathVariable Integer ciudadCodigo) {
-        List<MaterialDTO> materiales = materialService.buscarPorCiudad(ciudadCodigo);
-        return ResponseEntity.ok(materiales);
-    }
-
     // Crear un nuevo material
     @PostMapping
     public ResponseEntity<MaterialDTO> crearMaterial(@RequestBody MaterialDTO materialDTO) {
@@ -56,4 +50,16 @@ public class MaterialController {
         MaterialDTO materialActualizado = materialService.actualizarMaterial(id, materialDTO);
         return ResponseEntity.ok(materialActualizado);
     }
+
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<MaterialDTO>> filtrarMateriales(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String fechaCompra,
+            @RequestParam(required = false) String nombreCiudad
+    ) {
+        List<MaterialDTO> materiales = materialService.filtrarMateriales(tipo, fechaCompra, nombreCiudad);
+        return ResponseEntity.ok(materiales);
+    }
+
+
 }
