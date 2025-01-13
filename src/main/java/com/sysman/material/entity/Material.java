@@ -43,6 +43,8 @@ public class Material {
     private String departamento;
 
     // Getters y Setters
+
+
     public Long getId() {
         return id;
     }
@@ -122,4 +124,5 @@ public class Material {
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
     }
+
 }
